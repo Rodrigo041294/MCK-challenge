@@ -17,6 +17,7 @@
           <p>Ejercicio realizado por: <a href="#">Rodrigo Eduardo Rodriguez Araiza</a></p>
         </div>
         <div class="container">
+            <button class="btn btn-outline-primary" onclick="sincronizarDatosINEGI()">Sincronizar Datos de INEGI</button>
             <div class="row p-5">
                 <div class="col">
                     <table id="myTable" class="table table-hover">
@@ -71,6 +72,8 @@
 <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
     $(document).ready( function () {
         $('#myTable').DataTable({
@@ -100,6 +103,36 @@
                     <p><strong>Población femenina:</strong> ${response['data']['pob_mas']}</p>
                     <p><strong>Total de viviendas habitadas:</strong> ${response['data']['viv']}</p>
                 `);
+            }
+        });
+    }
+    function sincronizarDatosINEGI () {
+        Swal.showLoading();
+        $.ajax({
+            url: '/sincronizarDatosINEGI',
+            type: 'GET',
+            data: {
+                _token: '{{ csrf_token() }}'
+            },
+            success: function (response) {
+                if (response['status'] == 'success') {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Se han sincronizado los datos correctamente, por favor actualiza la página',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                } else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'danger',
+                        title: 'ocurrio un error, por favor intentalo más tarde',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                }
+            Swal.hideLoading()
             }
         });
     }
